@@ -1,4 +1,5 @@
 # Vintage Story Recipe Calculator
+🔗 **[Live site](https://kxiven.github.io/VS-calc/)**
 Web-based calculators for Vintage Story crafting chains that are
 tedious to work out by hand.
 
