@@ -1,35 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Cementation Furnace Calculator</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cementation Furnace Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --moss: #2f3d26;
+    --moss-2: #3c4d31;
+    --bark: #4a3826;
+    --bark-line: #6b5640;
+    --parchment: #ece3cf;
+    --parchment-dim: #beb193;
+    --clay: #a8672f;
+    --lichen: #8a9a5b;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: var(--moss);
+    color: var(--parchment);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body{
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(138,154,91,0.10), transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(168,103,47,0.08), transparent 50%);
+  }
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 22px 70px;
+  }
+  a.back{
+    display: inline-block;
+    font-size: 13px;
+    color: var(--lichen);
+    text-decoration: none;
+    margin-bottom: 22px;
+  }
+  a.back:hover{ color: var(--parchment); }
+
+  h1{
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    color: var(--parchment);
+  }
+  .wrap > p.sub{
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--parchment-dim);
+    max-width: 52ch;
+    margin: 0 0 36px;
+  }
+
+  .calculator{
+    display: flex;
+    gap: 2px;
+    margin-bottom: 28px;
+    border: 1px solid var(--bark-line);
+    background: var(--moss-2);
+  }
+  .item-box{
+    flex: 1;
+    padding: 24px 20px;
+    text-align: center;
+    border-right: 1px solid var(--bark-line);
+  }
+  .item-box:last-child{ border-right: none; }
+  .item-box img{
+    display: block;
+    margin: 0 auto 14px;
+    image-rendering: pixelated;
+  }
+  .item-box p{
+    font-family: 'Bitter', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: var(--parchment);
+  }
+  .item-box input[type=number]{
+    width: 100%;
+    max-width: 140px;
+    background: var(--bark);
+    border: 1px solid var(--bark-line);
+    color: var(--parchment);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 18px;
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 2px;
+  }
+  .item-box input[type=number]:focus{
+    outline: 2px solid var(--clay);
+    outline-offset: 1px;
+  }
+
+  .ledger{
+    border: 1px solid var(--bark-line);
+    background: var(--moss-2);
+  }
+  .ledger-head{
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--bark-line);
+  }
+  .ledger-head h2{
+    font-family: 'Bitter', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--parchment);
+  }
+  #output{
+    margin: 0;
+    padding: 18px 20px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--parchment-dim);
+    white-space: pre-wrap;
+  }
+  #output .num{
+    color: var(--clay);
+    font-variant-numeric: tabular-nums;
+  }
+
+  footer{
+    margin-top: 32px;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    line-height: 1.6;
+  }
+</style>
 </head>
 <body>
-  <h1>Cementation Furnace: Refractory Materials</h1>
+<div class="wrap">
+
+  <a class="back" href="../">← All tools</a>
+
+  <h1>Cementation Furnace</h1>
+  <p class="sub">Enter how many refractory brick blocks and gratings you need — every intermediate and raw material updates live below.</p>
 
   <div class="calculator">
     <div class="item-box">
-      <img src="Refractorybricks-good-tier1.png" alt="Refractory Brick Block T1" width="80">
-      <p>Blocks needed</p>
-      <input type="number" id="blockQty" min="0" value="0">
+      <img src="brick_block.png" alt="Refractory Brick Block T1" width="72">
+      <p>Brick blocks</p>
+      <input type="number" id="blockQty" value="0">
     </div>
 
     <div class="item-box">
-      <img src="Refractorybrickgrating-tier1.png" alt="Refractory Brick Grating T1" width="80">
-      <p>Gratings needed</p>
-      <input type="number" id="gratingQty" min="0" value="0">
+      <img src="brick_grating.png" alt="Refractory Brick Grating T1" width="72">
+      <p>Brick gratings</p>
+      <input type="number" id="gratingQty" value="0">
     </div>
   </div>
 
-  <h2>You'll need:</h2>
-  <pre id="output"></pre>
+  <div class="ledger">
+    <div class="ledger-head">
+      <h2>You'll need</h2>
+    </div>
+    <pre id="output"></pre>
+  </div>
 
-  <script src="recipes.js"></script>
-  <script src="engine.js"></script>
-  <script>
-    document.getElementById("blockQty").addEventListener("input", recalculate);
-    document.getElementById("gratingQty").addEventListener("input", recalculate);
-    recalculate(); // run once on page load
-  </script>
+  <footer>Tier 1 refractory bricks only, for now. Intermediate items (mortar, fireclay, etc.) are listed alongside raw materials in case you've got leftovers.</footer>
+
+</div>
+
+<script src="recipes.js"></script>
+<script src="engine.js"></script>
+<script>
+  document.getElementById("blockQty").addEventListener("input", recalculate);
+  document.getElementById("gratingQty").addEventListener("input", recalculate);
+  recalculate();
+</script>
 </body>
 </html>
