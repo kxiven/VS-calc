@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundry Ledger — Vintage Story Recipe Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --char: #1c1916;
+    --char-2: #262220;
+    --iron: #3c3630;
+    --iron-line: #4a4239;
+    --parchment: #e9dfc9;
+    --parchment-dim: #b9ae97;
+    --ember: #c9622b;
+    --ember-dim: #8f4a24;
+    --brass: #a8823c;
+    --sage: #7a8a68;
+    --bad: #b0503f;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0;
+    background: var(--char);
+    color: var(--parchment);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body{
+    background-image:
+      radial-gradient(ellipse at top, rgba(201,98,43,0.06), transparent 55%);
+  }
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 22px 80px;
+  }
+  header.hero{
+    border-bottom: 1px solid var(--iron-line);
+    padding-bottom: 28px;
+    margin-bottom: 34px;
+  }
+  .kicker{
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--brass);
+    margin: 0 0 10px;
+  }
+  h1{
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.12;
+    margin: 0 0 12px;
+    color: var(--parchment);
+  }
+  .hero p{
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--parchment-dim);
+    max-width: 52ch;
+    margin: 0;
+  }
+  nav.tabs{
+    display:flex;
+    gap: 2px;
+    margin-bottom: 30px;
+    border: 1px solid var(--iron-line);
+    background: var(--char-2);
+    width: fit-content;
+  }
+  nav.tabs button{
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--parchment-dim);
+    background: transparent;
+    border: none;
+    padding: 11px 20px;
+    cursor: pointer;
+    transition: color .15s ease, background .15s ease;
+  }
+  nav.tabs button.active{
+    color: var(--char);
+    background: var(--brass);
+  }
+  nav.tabs button:not(.active):hover{
+    color: var(--parchment);
+    background: var(--iron);
+  }
+  section.panel{ display:none; }
+  section.panel.active{ display:block; }
+
+  .field-row{
+    display:flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .field{
+    flex: 1;
+    min-width: 200px;
+  }
+  label{
+    display:block;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    margin-bottom: 6px;
+  }
+  select, input[type=number], input[type=text]{
+    width: 100%;
+    background: var(--char-2);
+    border: 1px solid var(--iron-line);
+    color: var(--parchment);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 2px;
+  }
+  select:focus, input:focus{
+    outline: 2px solid var(--ember);
+    outline-offset: 1px;
+  }
+
+  .ledger{
+    border: 1px solid var(--iron-line);
+    background: var(--char-2);
+  }
+  .ledger-head{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--iron-line);
+  }
+  .ledger-head h2{
+    font-family: 'Bitter', serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .ledger-head .note{
+    font-size: 13px;
+    color: var(--parchment-dim);
+  }
+  .ingredient-row{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--iron-line);
+  }
+  .ingredient-row:last-child{ border-bottom: none; }
+  .ing-name{
+    width: 130px;
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .ing-name input{
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--parchment);
+    font-size: 15px;
+    padding: 2px 0;
+  }
+  .ing-name input:focus{
+    outline: none;
+    border-bottom: 1px solid var(--ember);
+  }
+  .ing-slider{
+    flex: 1;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  input[type=range]{
+    flex: 1;
+    accent-color: var(--ember);
+  }
+  .pct{
+    width: 46px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: var(--brass);
+  }
+  .ing-result{
+    width: 150px;
+    text-align: right;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+  }
+  .ing-result .units{ color: var(--parchment-dim); }
+  .remove-btn{
+    background: none;
+    border: none;
+    color: var(--parchment-dim);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+  }
+  .remove-btn:hover{ color: var(--bad); }
+
+  .total-line{
+    display:flex;
+    justify-content: space-between;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: var(--parchment-dim);
+  }
+  .total-line.warn{ color: var(--bad); }
+  .total-line strong{ color: var(--parchment); font-weight: 600; }
+
+  .add-row{
+    padding: 12px 18px;
+    border-top: 1px dashed var(--iron-line);
+  }
+  .add-row button{
+    background: none;
+    border: 1px solid var(--iron-line);
+    color: var(--parchment-dim);
+    font-size: 13px;
+    padding: 7px 12px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .add-row button:hover{
+    border-color: var(--brass);
+    color: var(--brass);
+  }
+
+  .scaler-ing{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--iron-line);
+  }
+  .scaler-ing:last-child{ border-bottom:none; }
+  .scaler-ing input[type=text]{ flex: 1.4; }
+  .scaler-ing input[type=number]{ flex: 1; }
+  .scaler-result{
+    width: 90px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
+    color: var(--ember);
+    flex-shrink: 0;
+  }
+
+  footer{
+    margin-top: 34px;
+    font-size: 13px;
+    color: var(--parchment-dim);
+    line-height: 1.6;
+  }
+  footer code{
+    background: var(--char-2);
+    padding: 1px 5px;
+    border-radius: 2px;
+    color: var(--brass);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">Foundry Ledger</p>
+    <h1>Stop doing the ratio math by hand.</h1>
+    <p>Pick an alloy and a batch size to get exact nugget counts, or scale any recipe up for a bigger cook. Everything recalculates as you type.</p>
+  </header>
+
+  <nav class="tabs">
+    <button class="active" data-tab="alloy">Alloy mixing</button>
+    <button data-tab="scaler">Recipe scaler</button>
+  </nav>
+
+  <!-- ALLOY PANEL -->
+  <section class="panel active" id="panel-alloy">
+    <div class="field-row">
+      <div class="field">
+        <label for="alloy-select">Alloy</label>
+        <select id="alloy-select"></select>
+      </div>
+      <div class="field">
+        <label for="alloy-target">Target amount</label>
+        <select id="alloy-target-unit">
+          <option value="units">units</option>
+          <option value="nuggets">nuggets (×5 units)</option>
+          <option value="ingots">ingots (×100 units)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="alloy-target-num">&nbsp;</label>
+        <input type="number" id="alloy-target-num" value="500" min="1">
+      </div>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-head">
+        <h2 id="alloy-title">Tin Bronze</h2>
+        <span class="note" id="alloy-range-note"></span>
+      </div>
+      <div id="alloy-rows"></div>
+      <div class="total-line" id="alloy-total"></div>
+      <div class="add-row" id="alloy-custom-add" style="display:none;">
+        <button id="alloy-add-btn">+ add ingredient</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCALER PANEL -->
+  <section class="panel" id="panel-scaler">
+    <div class="field-row">
+      <div class="field">
+        <label for="scale-mode">Scale by</label>
+        <select id="scale-mode">
+          <option value="multiplier">multiplier (×N the base recipe)</option>
+          <option value="target">target amount of one ingredient</option>
+        </select>
+      </div>
+      <div class="field" id="scale-mult-field">
+        <label for="scale-mult">Multiplier</label>
+        <input type="number" id="scale-mult" value="2" min="0" step="0.1">
+      </div>
+      <div class="field" id="scale-target-field" style="display:none;">
+        <label for="scale-target-ing">Target ingredient amount</label>
+        <input type="number" id="scale-target-amt" value="10" min="0" step="0.1">
+      </div>
+    </div>
+
+    <div class="ledger">
+      <div class="ledger-head">
+        <h2>Base recipe</h2>
+        <span class="note">enter quantities for one batch</span>
+      </div>
+      <div id="scaler-rows"></div>
+      <div class="add-row">
+        <button id="scaler-add-btn">+ add ingredient</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Alloy ratios and unit sizes follow the current Vintage Story handbook (<code>1 nugget = 5 units</code>, <code>1 ingot = 100 units</code>). Rounding to whole nuggets can shift the mix a fraction of a percent from the slider value — the actual resulting percentages are shown next to each result.
+  </footer>
+
+</div>
+
+<script>
+// ---------- ALLOY DATA ----------
+// ranges are [min%, max%], default is the slider starting point
+const ALLOYS = {
+  tinbronze: {
+    name: "Tin Bronze",
+    ingredients: [
+      { name: "Copper", min: 88, max: 92, def: 90 },
+      { name: "Tin",    min: 8,  max: 12, def: 10 }
+    ]
+  },
+  bismuthbronze: {
+    name: "Bismuth Bronze",
+    ingredients: [
+      { name: "Copper",  min: 50, max: 70, def: 60 },
+      { name: "Bismuth", min: 10, max: 30, def: 20 },
+      { name: "Zinc",    min: 10, max: 20, def: 20 }
+    ]
+  },
+  blackbronze: {
+    name: "Black Bronze",
+    ingredients: [
+      { name: "Copper", min: 88, max: 92, def: 90 },
+      { name: "Silver", min: 2,  max: 8,  def: 5 },
+      { name: "Gold",   min: 2,  max: 8,  def: 5 }
+    ]
+  },
+  brass: {
+    name: "Brass",
+    ingredients: [
+      { name: "Copper", min: 60, max: 70, def: 65 },
+      { name: "Zinc",   min: 30, max: 40, def: 35 }
+    ]
+  },
+  custom: {
+    name: "Custom mix",
+    ingredients: [
+      { name: "Metal A", min: 0, max: 100, def: 50 },
+      { name: "Metal B", min: 0, max: 100, def: 50 }
+    ]
+  }
+};
+
+const alloySelect = document.getElementById('alloy-select');
+Object.entries(ALLOYS).forEach(([key, a]) => {
+  const opt = document.createElement('option');
+  opt.value = key;
+  opt.textContent = a.name;
+  alloySelect.appendChild(opt);
+});
+
+let currentAlloyKey = 'tinbronze';
+let currentIngredients = []; // working copy, mutable for custom
+
+function cloneIngredients(key){
+  return ALLOYS[key].ingredients.map(i => ({...i, pct: i.def}));
+}
+
+function renderAlloy(){
+  const key = currentAlloyKey;
+  const data = ALLOYS[key];
+  document.getElementById('alloy-title').textContent = data.name;
+  document.getElementById('alloy-custom-add').style.display = key === 'custom' ? 'block' : 'none';
+
+  const rangeNote = currentIngredients.map(i => `${i.name} ${i.min}–${i.max}%`).join(' · ');
+  document.getElementById('alloy-range-note').textContent = key === 'custom' ? 'ranges are free — set your own' : rangeNote;
+
+  const targetUnit = document.getElementById('alloy-target-unit').value;
+  const targetNum = parseFloat(document.getElementById('alloy-target-num').value) || 0;
+  let totalUnits = targetNum;
+  if (targetUnit === 'nuggets') totalUnits = targetNum * 5;
+  if (targetUnit === 'ingots') totalUnits = targetNum * 100;
+
+  const rowsEl = document.getElementById('alloy-rows');
+  rowsEl.innerHTML = '';
+
+  let pctSum = 0;
+  currentIngredients.forEach(i => pctSum += i.pct);
+
+  currentIngredients.forEach((ing, idx) => {
+    const row = document.createElement('div');
+    row.className = 'ingredient-row';
+
+    const nameWrap = document.createElement('div');
+    nameWrap.className = 'ing-name';
+    if (key === 'custom') {
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text';
+      nameInput.value = ing.name;
+      nameInput.addEventListener('input', e => { ing.name = e.target.value; renderAlloy(); });
+      nameWrap.appendChild(nameInput);
+    } else {
+      nameWrap.textContent = ing.name;
+    }
+    row.appendChild(nameWrap);
+
+    const sliderWrap = document.createElement('div');
+    sliderWrap.className = 'ing-slider';
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = key === 'custom' ? 0 : ing.min;
+    slider.max = key === 'custom' ? 100 : ing.max;
+    slider.step = 0.5;
+    slider.value = ing.pct;
+    slider.addEventListener('input', e => {
+      ing.pct = parseFloat(e.target.value);
+      renderAlloy();
+    });
+    const pctLabel = document.createElement('span');
+    pctLabel.className = 'pct';
+    pctLabel.textContent = ing.pct.toFixed(1) + '%';
+    sliderWrap.appendChild(slider);
+    sliderWrap.appendChild(pctLabel);
+    row.appendChild(sliderWrap);
+
+    const units = totalUnits * (ing.pct / 100);
+    const nuggets = units / 5;
+    const nuggetsRounded = Math.round(nuggets);
+    const resultEl = document.createElement('div');
+    resultEl.className = 'ing-result';
+    resultEl.innerHTML = `${nuggetsRounded} nuggets <span class="units">(${Math.round(nuggetsRounded*5)} units)</span>`;
+    row.appendChild(resultEl);
+
+    if (key === 'custom') {
+      const rm = document.createElement('button');
+      rm.className = 'remove-btn';
+      rm.textContent = '×';
+      rm.title = 'remove ingredient';
+      rm.addEventListener('click', () => {
+        currentIngredients.splice(idx, 1);
+        renderAlloy();
+      });
+      row.appendChild(rm);
+    }
+
+    rowsEl.appendChild(row);
+  });
+
+  const totalLine = document.getElementById('alloy-total');
+  const roundedTotalUnits = currentIngredients.reduce((s,i) => s + Math.round((totalUnits*(i.pct/100))/5)*5, 0);
+  const drift = Math.abs(pctSum - 100);
+  totalLine.className = 'total-line' + (drift > 0.6 ? ' warn' : '');
+  totalLine.innerHTML = `<span>Mix sums to ${pctSum.toFixed(1)}% · rounded batch ≈ <strong>${roundedTotalUnits} units</strong> (${(roundedTotalUnits/5).toFixed(0)} nuggets)</span>`;
+}
+
+document.getElementById('alloy-select').addEventListener('change', e => {
+  currentAlloyKey = e.target.value;
+  currentIngredients = cloneIngredients(currentAlloyKey);
+  renderAlloy();
+});
+document.getElementById('alloy-target-num').addEventListener('input', renderAlloy);
+document.getElementById('alloy-target-unit').addEventListener('change', renderAlloy);
+document.getElementById('alloy-add-btn').addEventListener('click', () => {
+  currentIngredients.push({ name: 'New metal', min: 0, max: 100, pct: 0 });
+  renderAlloy();
+});
+
+currentIngredients = cloneIngredients(currentAlloyKey);
+renderAlloy();
+
+// ---------- TABS ----------
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ---------- SCALER ----------
+let scalerIngredients = [
+  { name: 'Flour', amount: 2 },
+  { name: 'Water', amount: 1 },
+  { name: 'Cabbage', amount: 3 }
+];
+
+function renderScaler(){
+  const rowsEl = document.getElementById('scaler-rows');
+  rowsEl.innerHTML = '';
+
+  const mode = document.getElementById('scale-mode').value;
+  document.getElementById('scale-mult-field').style.display = mode === 'multiplier' ? 'block' : 'none';
+  document.getElementById('scale-target-field').style.display = mode === 'target' ? 'block' : 'none';
+
+  let multiplier = 1;
+  if (mode === 'multiplier') {
+    multiplier = parseFloat(document.getElementById('scale-mult').value) || 0;
+  }
+
+  scalerIngredients.forEach((ing, idx) => {
+    const row = document.createElement('div');
+    row.className = 'scaler-ing';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.value = ing.name;
+    nameInput.placeholder = 'ingredient';
+    nameInput.addEventListener('input', e => { ing.name = e.target.value; });
+    row.appendChild(nameInput);
+
+    const amtInput = document.createElement('input');
+    amtInput.type = 'number';
+    amtInput.value = ing.amount;
+    amtInput.min = 0;
+    amtInput.step = 0.1;
+    amtInput.placeholder = 'base qty';
+    amtInput.addEventListener('input', e => {
+      ing.amount = parseFloat(e.target.value) || 0;
+      renderScaler();
+    });
+    row.appendChild(amtInput);
+
+    if (mode === 'target' && idx === 0) {
+      amtInput.style.borderBottom = '1px solid var(--ember)';
+    }
+
+    let scaledAmount;
+    if (mode === 'multiplier') {
+      scaledAmount = ing.amount * multiplier;
+    } else {
+      const targetAmt = parseFloat(document.getElementById('scale-target-amt').value) || 0;
+      const baseFirst = scalerIngredients[0].amount || 1;
+      const localMult = targetAmt / baseFirst;
+      scaledAmount = ing.amount * localMult;
+    }
+
+    const resultEl = document.createElement('div');
+    resultEl.className = 'scaler-result';
+    resultEl.textContent = (Math.round(scaledAmount * 100) / 100).toString();
+    row.appendChild(resultEl);
+
+    const rm = document.createElement('button');
+    rm.className = 'remove-btn';
+    rm.textContent = '×';
+    rm.title = 'remove ingredient';
+    rm.addEventListener('click', () => {
+      scalerIngredients.splice(idx, 1);
+      renderScaler();
+    });
+    row.appendChild(rm);
+
+    rowsEl.appendChild(row);
+  });
+
+  if (mode === 'target') {
+    const hint = document.createElement('div');
+    hint.style.padding = '10px 18px';
+    hint.style.fontSize = '13px';
+    hint.style.color = 'var(--parchment-dim)';
+    hint.textContent = `Scaling so "${scalerIngredients[0]?.name || 'first ingredient'}" hits your target amount — everything else follows the same ratio.`;
+    rowsEl.appendChild(hint);
+  }
+}
+
+document.getElementById('scale-mode').addEventListener('change', renderScaler);
+document.getElementById('scale-mult').addEventListener('input', renderScaler);
+document.getElementById('scale-target-amt').addEventListener('input', renderScaler);
+document.getElementById('scaler-add-btn').addEventListener('click', () => {
+  scalerIngredients.push({ name: '', amount: 1 });
+  renderScaler();
+});
+
+renderScaler();
+</script>
+</body>
+</html>
