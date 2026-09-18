@@ -54,5 +54,32 @@ function recalculate() {
     mergeInto(master, blockResult);
     mergeInto(master, gratingResult);
 
-    document.getElementById("output").textContent = JSON.stringify(master, null, 2);
+    renderOutput(master);
+}
+
+function renderOutput(materials) {
+    const outputEl = document.getElementById("output");
+    outputEl.innerHTML = ""; // clear whatever was there before
+
+    for (const itemName in materials) {
+        const quantity = materials[itemName];
+        const imgSrc = itemImages[itemName]; // may be undefined if no image exists yet
+
+        const row = document.createElement("div");
+        row.className = "material-row";
+
+        if (imgSrc) {
+            const img = document.createElement("img");
+            img.src = imgSrc;
+            img.alt = itemName;
+            img.width = 32;
+            row.appendChild(img);
+        }
+
+        const label = document.createElement("span");
+        label.textContent = `${itemName}: ${quantity}`;
+        row.appendChild(label);
+
+        outputEl.appendChild(row);
+    }
 }
