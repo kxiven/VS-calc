@@ -59,11 +59,11 @@ function recalculate() {
 
 function renderOutput(materials) {
     const outputEl = document.getElementById("output");
-    outputEl.innerHTML = ""; // clear whatever was there before
+    outputEl.innerHTML = ""; //clear whatever was there before
 
     for (const itemName in materials) {
         const quantity = materials[itemName];
-        const imgSrc = itemImages[itemName]; // may be undefined if no image exists yet
+        const imgSrc = itemImages[itemName]; //may be undefined if no image exists yet
 
         const row = document.createElement("div");
         row.className = "material-row";
