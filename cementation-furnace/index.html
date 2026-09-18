@@ -2,12 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>kxiven's's Tools</title>
+  <title>Cementation Furnace Calculator</title>
 </head>
 <body>
-  <h1>kxiven's Tools</h1>
-  <ul>
-    <li><a href="Vintage-Story-Recipe-Calculator/">Home Page</a></li>
-  </ul>
+  <h1>Cementation Furnace — Refractory Materials</h1>
+
+  <div class="calculator">
+    <div class="item-box">
+      <img src="Refractorybricks-good-tier1" alt="Refractory Brick Block T1" width="80">
+      <p>Blocks needed</p>
+      <input type="number" id="blockQty" min="0" value="0">
+    </div>
+
+    <div class="item-box">
+      <img src="Refractorybrickgrating-tier1" alt="Refractory Brick Grating T1" width="80">
+      <p>Gratings needed</p>
+      <input type="number" id="gratingQty" min="0" value="0">
+    </div>
+  </div>
+
+  <h2>You'll need:</h2>
+  <pre id="output"></pre>
+
+  <script src="recipes.js"></script>
+  <script src="engine.js"></script>
+  <script>
+    document.getElementById("blockQty").addEventListener("input", recalculate);
+    document.getElementById("gratingQty").addEventListener("input", recalculate);
+    recalculate(); // run once on page load
+  </script>
 </body>
 </html>

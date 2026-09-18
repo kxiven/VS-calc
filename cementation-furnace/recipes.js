@@ -1,26 +1,26 @@
 const recipes = 
 {
-  refractory_brick_block: 
+  refractory_brick_block_t1: 
   {
     yieldPerCraft: 2,
     inputs: 
     [
-      { item: "refractory_brick", qty: 8 },
+      { item: "refractory_brick_t1", qty: 8 },
       { item: "mortar", qty: 1 }
     ]
   },
 
-  refractory_brick_grating: 
+  refractory_brick_grating_t1: 
   {
     yieldPerCraft: 3,
     inputs: 
     [
-      { item: "refractory_brick", qty: 6 },
+      { item: "refractory_brick_t1", qty: 6 },
       { item: "mortar", qty: 1 }
     ]
   },
 
-  refractory_brick:
+  refractory_brick_t1:
   {
     yieldPerCraft: 1,
     inputs:
@@ -70,3 +70,7 @@ const recipes =
     ]
   },
 };
+
+if (typeof module !== "undefined") {
+    module.exports = recipes;
+}
