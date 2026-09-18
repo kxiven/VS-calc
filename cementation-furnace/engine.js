@@ -1,5 +1,3 @@
-const recipes = require("./recipes.js");
-
 function namehold(craftable, quantity) 
 {
     const total_materials = { };
