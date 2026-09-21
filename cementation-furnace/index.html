@@ -178,6 +178,18 @@
   </p>
 </div>
 
+<div class="ledger-columns">
+  <div class="ledger">
+    <div class="ledger-head"><h2>Intermediate items</h2></div>
+    <div id="intermediate-output"></div>
+  </div>
+
+  <div class="ledger">
+    <div class="ledger-head"><h2>Raw materials</h2></div>
+    <div id="raw-output"></div>
+  </div>
+</div>
+
   <footer>Tier 1 refractory bricks only, for now. Intermediate items (mortar, fireclay, etc.) are listed alongside raw materials in case you've got leftovers.</footer>
 
 </div>
@@ -188,6 +200,10 @@
 <script>
   document.getElementById("blockQty").addEventListener("input", recalculate);
   document.getElementById("gratingQty").addEventListener("input", recalculate);
+  document.getElementById("surplus-note-btn").addEventListener("click", function() {
+      const note = document.getElementById("surplus-note");
+      note.style.display = (note.style.display === "none") ? "block" : "none";
+  });
   recalculate();
 </script>
 </body>
