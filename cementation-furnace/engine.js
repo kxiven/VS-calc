@@ -46,7 +46,7 @@ function mergeInto(target, source) {
 function recalculate() {
     const blockQty = Number(document.getElementById("blockQty").value);
     const gratingQty = Number(document.getElementById("gratingQty").value);
-
+    
     const blockResult = namehold("refractory_brick_block_t1", blockQty);
     const gratingResult = namehold("refractory_brick_grating_t1", gratingQty);
 
@@ -58,8 +58,10 @@ function recalculate() {
 }
 
 function renderOutput(materials) {
-    const outputEl = document.getElementById("output");
-    outputEl.innerHTML = ""; //clear whatever was there before
+    const rawEl = document.getElementById("raw-output");
+    const intermediateEl = document.getElementById("intermediate-output");
+    rawEl.innerHTML = "";
+    intermediateEl.innerHTML = "";
 
     for (const itemName in materials) {
         const quantity = materials[itemName];
@@ -80,6 +82,11 @@ function renderOutput(materials) {
         label.textContent = `${itemName}: ${quantity}`;
         row.appendChild(label);
 
-        outputEl.appendChild(row);
+        // route into the correct column depending on whether it has a recipe
+        if (recipes[itemName] !== undefined) {
+            intermediateEl.appendChild(row);
+        } else {
+            rawEl.appendChild(row);
+        }
     }
 }

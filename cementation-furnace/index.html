@@ -163,12 +163,20 @@
     </div>
   </div>
 
-  <div class="ledger">
-    <div class="ledger-head">
-      <h2>You'll need</h2>
-    </div>
-    <div id="output"></div>
-  </div>
+<div class="ledger-head" style="display: flex; justify-content: space-between; align-items: center;">
+  <h2>You'll need</h2>
+  <button id="surplus-note-btn">I'm crafting too much!</button>
+</div>
+
+<div id="surplus-note" style="display: none;">
+  <p>
+    You'll likely end up with a small surplus of mortar (and possibly other intermediates) —
+    this isn't a bug in the calculator. It happens because crafting yields come in fixed batch
+    sizes, so the closest amount you can actually produce is sometimes a bit more than what's
+    strictly needed. The numbers shown are the minimum required; any leftover comes from the
+    game's own crafting constraints, not rounding errors here.
+  </p>
+</div>
 
   <footer>Tier 1 refractory bricks only, for now. Intermediate items (mortar, fireclay, etc.) are listed alongside raw materials in case you've got leftovers.</footer>
 
